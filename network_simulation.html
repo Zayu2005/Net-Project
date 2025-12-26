@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络数据传输与封装模拟系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .panel h2 {
+            color: #2a5298;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .control-panel {
+            grid-column: 1 / -1;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #networkCanvas {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .protocol-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .layer {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 5px solid;
+            transition: all 0.3s;
+        }
+
+        .layer:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .layer-application { border-color: #e74c3c; }
+        .layer-transport { border-color: #f39c12; }
+        .layer-network { border-color: #3498db; }
+        .layer-datalink { border-color: #2ecc71; }
+        .layer-physical { border-color: #9b59b6; }
+
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .layer-name {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .layer-data {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-all;
+            font-size: 0.9em;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .log-time {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .route-path {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .route-path h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .path-step {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #ddd;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .transmitting {
+            animation: pulse 1s infinite;
+        }
+
+        .config-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>网络数据传输与封装模拟系统</h1>
+            <p class="subtitle">模拟OSI协议栈 · Dijkstra路由算法 · 数据包封装解封装</p>
+        </header>
+
+        <div class="main-content">
+            <!-- 控制面板 -->
+            <div class="panel control-panel">
+                <h2>控制面板</h2>
+                <div class="config-row">
+                    <div class="input-group">
+                        <label>源节点</label>
+                        <select id="sourceNode">
+                            <option value="A">节点 A</option>
+                            <option value="B">节点 B</option>
+                            <option value="C">节点 C</option>
+                            <option value="D">节点 D</option>
+                            <option value="E">节点 E</option>
+                            <option value="F">节点 F</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>目标节点</label>
+                        <select id="destNode">
+                            <option value="A">节点 A</option>
+                            <option value="B">节点 B</option>
+                            <option value="C">节点 C</option>
+                            <option value="D" selected>节点 D</option>
+                            <option value="E">节点 E</option>
+                            <option value="F">节点 F</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>传输协议</label>
+                        <select id="protocol">
+                            <option value="TCP">TCP</option>
+                            <option value="UDP">UDP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>数据内容</label>
+                    <textarea id="dataInput" placeholder="请输入要传输的数据...">Hello, this is a network simulation test!</textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="startTransmission()">开始传输</button>
+                    <button class="btn-success" onclick="calculateRoute()">计算路由</button>
+                    <button class="btn-warning" onclick="encapsulateData()">封装数据</button>
+                    <button class="btn-info" onclick="clearLogs()">清空日志</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="packetCount">0</div>
+                        <div class="stat-label">数据包数量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="hopCount">0</div>
+                        <div class="stat-label">路由跳数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSize">0</div>
+                        <div class="stat-label">总大小(字节)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 网络拓扑 -->
+            <div class="panel">
+                <h2>网络拓扑图</h2>
+                <canvas id="networkCanvas"></canvas>
+                <div id="routeInfo" class="route-path" style="display:none;">
+                    <h3>最短路径</h3>
+                    <div id="pathDisplay"></div>
+                </div>
+            </div>
+
+            <!-- 协议栈 -->
+            <div class="panel">
+                <h2>协议栈封装</h2>
+                <div class="protocol-stack">
+                    <div class="layer layer-application">
+                        <div class="layer-header">
+                            <span class="layer-name">应用层 (Application)</span>
+                            <span>Layer 7</span>
+                        </div>
+                        <div class="layer-data" id="layer7"></div>
+                    </div>
+                    <div class="layer layer-transport">
+                        <div class="layer-header">
+                            <span class="layer-name">传输层 (Transport)</span>
+                            <span>Layer 4</span>
+                        </div>
+                        <div class="layer-data" id="layer4"></div>
+                    </div>
+                    <div class="layer layer-network">
+                        <div class="layer-header">
+                            <span class="layer-name">网络层 (Network)</span>
+                            <span>Layer 3</span>
+                        </div>
+                        <div class="layer-data" id="layer3"></div>
+                    </div>
+                    <div class="layer layer-datalink">
+                        <div class="layer-header">
+                            <span class="layer-name">数据链路层 (Data Link)</span>
+                            <span>Layer 2</span>
+                        </div>
+                        <div class="layer-data" id="layer2"></div>
+                    </div>
+                    <div class="layer layer-physical">
+                        <div class="layer-header">
+                            <span class="layer-name">物理层 (Physical)</span>
+                            <span>Layer 1</span>
+                        </div>
+                        <div class="layer-data" id="layer1"></div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <strong>提示：</strong>点击"封装数据"查看每层添加的协议头部信息
+                </div>
+            </div>
+
+            <!-- 日志 -->
+            <div class="panel">
+                <h2>传输日志</h2>
+                <div class="log-container" id="logContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 网络节点配置
+        const nodes = {
+            A: { x: 100, y: 100, ip: '192.168.1.1', mac: 'AA:BB:CC:DD:EE:01' },
+            B: { x: 300, y: 80, ip: '192.168.1.2', mac: 'AA:BB:CC:DD:EE:02' },
+            C: { x: 500, y: 100, ip: '192.168.1.3', mac: 'AA:BB:CC:DD:EE:03' },
+            D: { x: 400, y: 250, ip: '192.168.1.4', mac: 'AA:BB:CC:DD:EE:04' },
+            E: { x: 200, y: 300, ip: '192.168.1.5', mac: 'AA:BB:CC:DD:EE:05' },
+            F: { x: 100, y: 450, ip: '192.168.1.6', mac: 'AA:BB:CC:DD:EE:06' }
+        };
+
+        // 网络链路配置（边的权重代表链路成本）
+        const edges = [
+            { from: 'A', to: 'B', weight: 4 },
+            { from: 'A', to: 'E', weight: 2 },
+            { from: 'B', to: 'C', weight: 3 },
+            { from: 'B', to: 'D', weight: 5 },
+            { from: 'C', to: 'D', weight: 2 },
+            { from: 'D', to: 'E', weight: 3 },
+            { from: 'E', to: 'F', weight: 4 },
+            { from: 'D', to: 'F', weight: 6 }
+        ];
+
+        let canvas, ctx;
+        let currentPath = [];
+        let packetData = {};
+
+        // 初始化
+        window.onload = function() {
+            canvas = document.getElementById('networkCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            drawNetwork();
+            addLog('系统初始化完成', 'info');
+        };
+
+        // 绘制网络拓扑
+        function drawNetwork(highlightPath = []) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制边
+            edges.forEach(edge => {
+                const from = nodes[edge.from];
+                const to = nodes[edge.to];
+                const isHighlighted = highlightPath.length > 0 &&
+                    highlightPath.some((node, i) =>
+                        i < highlightPath.length - 1 &&
+                        ((highlightPath[i] === edge.from && highlightPath[i+1] === edge.to) ||
+                         (highlightPath[i] === edge.to && highlightPath[i+1] === edge.from))
+                    );
+
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
+                ctx.strokeStyle = isHighlighted ? '#e74c3c' : '#95a5a6';
+                ctx.lineWidth = isHighlighted ? 4 : 2;
+                ctx.stroke();
+
+                // 绘制权重
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(midX - 15, midY - 12, 30, 24);
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(edge.weight, midX, midY);
+            });
+
+            // 绘制节点
+            Object.keys(nodes).forEach(nodeId => {
+                const node = nodes[nodeId];
+                const isHighlighted = highlightPath.includes(nodeId);
+
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 30, 0, Math.PI * 2);
+                ctx.fillStyle = isHighlighted ? '#e74c3c' : '#3498db';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 节点标签
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(nodeId, node.x, node.y);
+
+                // IP地址
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = '11px Arial';
+                ctx.fillText(node.ip, node.x, node.y + 45);
+            });
+        }
+
+        // Dijkstra算法计算最短路径
+        function dijkstra(start, end) {
+            const distances = {};
+            const previous = {};
+            const unvisited = new Set(Object.keys(nodes));
+
+            // 初始化距离
+            Object.keys(nodes).forEach(node => {
+                distances[node] = Infinity;
+                previous[node] = null;
+            });
+            distances[start] = 0;
+
+            while (unvisited.size > 0) {
+                // 找到未访问节点中距离最小的
+                let current = null;
+                let minDistance = Infinity;
+                unvisited.forEach(node => {
+                    if (distances[node] < minDistance) {
+                        minDistance = distances[node];
+                        current = node;
+                    }
+                });
+
+                if (current === null || current === end) break;
+                unvisited.delete(current);
+
+                // 更新邻居节点距离
+                edges.forEach(edge => {
+                    let neighbor = null;
+                    if (edge.from === current && unvisited.has(edge.to)) {
+                        neighbor = edge.to;
+                    } else if (edge.to === current && unvisited.has(edge.from)) {
+                        neighbor = edge.from;
+                    }
+
+                    if (neighbor) {
+                        const alt = distances[current] + edge.weight;
+                        if (alt < distances[neighbor]) {
+                            distances[neighbor] = alt;
+                            previous[neighbor] = current;
+                        }
+                    }
+                });
+            }
+
+            // 重建路径
+            const path = [];
+            let current = end;
+            while (current !== null) {
+                path.unshift(current);
+                current = previous[current];
+            }
+
+            return { path, distance: distances[end] };
+        }
+
+        // 计算路由
+        function calculateRoute() {
+            const source = document.getElementById('sourceNode').value;
+            const dest = document.getElementById('destNode').value;
+
+            if (source === dest) {
+                alert('源节点和目标节点不能相同！');
+                return;
+            }
+
+            const result = dijkstra(source, dest);
+            currentPath = result.path;
+
+            addLog(`使用Dijkstra算法计算从 ${source} 到 ${dest} 的最短路径`, 'success');
+            addLog(`路径: ${result.path.join(' → ')}`, 'success');
+            addLog(`总距离: ${result.distance}`, 'success');
+
+            document.getElementById('hopCount').textContent = result.path.length - 1;
+
+            // 显示路径
+            const pathDisplay = document.getElementById('pathDisplay');
+            pathDisplay.innerHTML = result.path.map(node =>
+                `<span class="path-step">${node} (${nodes[node].ip})</span>`
+            ).join(' → ');
+            document.getElementById('routeInfo').style.display = 'block';
+
+            drawNetwork(currentPath);
+        }
+
+        // 数据封装
+        function encapsulateData() {
+            const data = document.getElementById('dataInput').value;
+            const protocol = document.getElementById('protocol').value;
+            const source = document.getElementById('sourceNode').value;
+            const dest = document.getElementById('destNode').value;
+
+            if (!data) {
+                alert('请输入数据内容！');
+                return;
+            }
+
+            // 应用层
+            const appData = data;
+            document.getElementById('layer7').textContent =
+                `数据: "${appData}"\n长度: ${appData.length} 字节`;
+
+            // 传输层
+            const srcPort = Math.floor(Math.random() * 60000) + 1024;
+            const destPort = protocol === 'TCP' ? 80 : 53;
+            const seqNum = Math.floor(Math.random() * 1000000);
+            const checksum = calculateChecksum(appData);
+
+            const transportHeader = {
+                protocol: protocol,
+                srcPort: srcPort,
+                destPort: destPort,
+                seqNum: seqNum,
+                checksum: checksum,
+                dataLength: appData.length
+            };
+
+            document.getElementById('layer4').textContent =
+                `${protocol} Header:\n` +
+                `源端口: ${srcPort}\n` +
+                `目标端口: ${destPort}\n` +
+                `序列号: ${seqNum}\n` +
+                `校验和: 0x${checksum.toString(16).toUpperCase()}\n` +
+                `数据长度: ${appData.length} 字节`;
+
+            // 网络层
+            const ipHeader = {
+                version: 4,
+                srcIP: nodes[source].ip,
+                destIP: nodes[dest].ip,
+                ttl: 64,
+                protocol: protocol === 'TCP' ? 6 : 17,
+                totalLength: appData.length + 20 + 20
+            };
+
+            document.getElementById('layer3').textContent =
+                `IP Header (IPv4):\n` +
+                `版本: ${ipHeader.version}\n` +
+                `源IP: ${ipHeader.srcIP}\n` +
+                `目标IP: ${ipHeader.destIP}\n` +
+                `TTL: ${ipHeader.ttl}\n` +
+                `协议号: ${ipHeader.protocol}\n` +
+                `总长度: ${ipHeader.totalLength} 字节`;
+
+            // 数据链路层
+            const frameHeader = {
+                srcMAC: nodes[source].mac,
+                destMAC: nodes[dest].mac,
+                etherType: '0x0800',
+                fcs: calculateFCS(appData)
+            };
+
+            document.getElementById('layer2').textContent =
+                `以太网帧头:\n` +
+                `源MAC: ${frameHeader.srcMAC}\n` +
+                `目标MAC: ${frameHeader.destMAC}\n` +
+                `类型: ${frameHeader.etherType} (IPv4)\n` +
+                `FCS: 0x${frameHeader.fcs.toString(16).toUpperCase()}`;
+
+            // 物理层
+            const binaryData = textToBinary(appData).substring(0, 128);
+            document.getElementById('layer1').textContent =
+                `比特流 (前128位):\n${binaryData}...\n` +
+                `编码: Manchester\n` +
+                `传输速率: 1000 Mbps`;
+
+            packetData = {
+                appData,
+                transportHeader,
+                ipHeader,
+                frameHeader
+            };
+
+            const totalSize = appData.length + 20 + 20 + 18;
+            document.getElementById('totalSize').textContent = totalSize;
+
+            addLog('数据封装完成', 'success');
+            addLog(`应用层数据: ${appData.length} 字节`, 'info');
+            addLog(`传输层头部: 20 字节 (${protocol})`, 'info');
+            addLog(`网络层头部: 20 字节 (IPv4)`, 'info');
+            addLog(`数据链路层: 18 字节 (以太网帧)`, 'info');
+            addLog(`总大小: ${totalSize} 字节`, 'success');
+        }
+
+        // 开始传输
+        async function startTransmission() {
+            const source = document.getElementById('sourceNode').value;
+            const dest = document.getElementById('destNode').value;
+
+            if (source === dest) {
+                alert('源节点和目标节点不能相同！');
+                return;
+            }
+
+            // 先封装数据
+            encapsulateData();
+
+            // 计算路由
+            const result = dijkstra(source, dest);
+            currentPath = result.path;
+
+            addLog('=' .repeat(50), 'info');
+            addLog(`开始传输: ${source} → ${dest}`, 'warning');
+            addLog(`路由路径: ${result.path.join(' → ')}`, 'success');
+            addLog('=' .repeat(50), 'info');
+
+            document.getElementById('packetCount').textContent = 1;
+            document.getElementById('hopCount').textContent = result.path.length - 1;
+
+            // 显示路径
+            const pathDisplay = document.getElementById('pathDisplay');
+            pathDisplay.innerHTML = result.path.map(node =>
+                `<span class="path-step">${node} (${nodes[node].ip})</span>`
+            ).join(' → ');
+            document.getElementById('routeInfo').style.display = 'block';
+
+            // 逐跳传输动画
+            for (let i = 0; i < result.path.length - 1; i++) {
+                const from = result.path[i];
+                const to = result.path[i + 1];
+
+                addLog(`跳 ${i + 1}: ${from} → ${to}`, 'info');
+                addLog(`  解封装数据链路层，获取下一跳地址`, 'info');
+                addLog(`  查找路由表，转发到 ${to} (${nodes[to].ip})`, 'info');
+                addLog(`  重新封装数据链路层，更新MAC地址`, 'info');
+
+                drawNetwork(result.path.slice(0, i + 2));
+                await sleep(1500);
+            }
+
+            addLog(`数据包成功到达目标节点 ${dest}`, 'success');
+            addLog('开始解封装数据...', 'info');
+
+            await sleep(500);
+            addLog('  剥离物理层', 'info');
+            await sleep(300);
+            addLog('  剥离数据链路层', 'info');
+            await sleep(300);
+            addLog('  剥离网络层', 'info');
+            await sleep(300);
+            addLog('  剥离传输层', 'info');
+            await sleep(300);
+            addLog(`  应用层接收数据: "${document.getElementById('dataInput').value}"`, 'success');
+            addLog('传输完成！', 'success');
+        }
+
+        // 辅助函数
+        function calculateChecksum(data) {
+            let sum = 0;
+            for (let i = 0; i < data.length; i++) {
+                sum += data.charCodeAt(i);
+            }
+            return sum & 0xFFFF;
+        }
+
+        function calculateFCS(data) {
+            let fcs = 0xFFFFFFFF;
+            for (let i = 0; i < data.length; i++) {
+                fcs ^= data.charCodeAt(i);
+                fcs = ((fcs >>> 1) ^ (0xEDB88320 & -(fcs & 1))) >>> 0;
+            }
+            return (~fcs) >>> 0;
+        }
+
+        function textToBinary(text) {
+            return text.split('').map(char =>
+                char.charCodeAt(0).toString(2).padStart(8, '0')
+            ).join(' ');
+        }
+
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const time = new Date().toLocaleTimeString();
+            const colorMap = {
+                info: '#00ff00',
+                success: '#00ffff',
+                warning: '#ffff00',
+                error: '#ff0000'
+            };
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">[${time}]</span><span style="color:${colorMap[type]}">${message}</span>`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '';
+            addLog('日志已清空', 'info');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>

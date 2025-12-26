@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(dir /s /b)",
+      "Bash(mkdir:*)",
+      "Bash(mvn clean:*)",
+      "Bash(mvn dependency:tree:*)",
+      "Bash(mvn help:effective-pom:*)",
+      "Bash(mvn dependency:purge-local-repository:*)",
+      "Bash(mvn spring-boot:run:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout 30 tail:*)",
+      "Bash(exit 0)",
+      "Bash(tasklist:*)",
+      "Bash(timeout:*)",
+      "Bash(taskkill.exe:*)",
+      "Bash(start \"backend-server\" mvn spring-boot:run -DskipTests)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(cmd /c \"taskkill /F /PID 49356\")",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(cmd /c \"taskkill /F /PID 44200\")",
+      "Bash(powershell -Command \"Stop-Process -Id 44200 -Force\")"
+    ]
+  }
+}

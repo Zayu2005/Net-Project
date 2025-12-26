@@ -1,0 +1,377 @@
+/* 全局样式 - TDesign 方正风格 */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 移除所有圆角 */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+/* TDesign 组件圆角覆盖 */
+.t-button,
+.t-input,
+.t-select,
+.t-card,
+.t-dialog,
+.t-drawer,
+.t-table,
+.t-pagination,
+.t-tag,
+.t-alert,
+.t-message,
+.t-notification,
+.t-tooltip,
+.t-dropdown,
+.t-menu,
+.t-tabs,
+.t-steps,
+.t-progress,
+.t-input-number,
+.t-date-picker,
+.t-textarea,
+.t-checkbox,
+.t-radio,
+.t-switch,
+.t-slider {
+  border-radius: 0 !important;
+}
+
+/* TDesign Layout 组件不受全局样式影响 */
+.t-layout,
+.t-aside,
+.t-header,
+.t-content,
+.t-footer {
+  border-radius: 0 !important;
+}
+
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background: #f5f5f5;
+  overflow-x: hidden;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 方正容器样式 */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 页面标题 */
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #000;
+}
+
+/* 卡片样式 */
+.card-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* 网格布局 */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* 按钮组 */
+.button-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* 表单样式 */
+.form-row {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+/* 统计卡片 */
+.stat-card {
+  background: #fff;
+  border: 2px solid #000;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  border-color: #0052d9;
+  box-shadow: 0 4px 12px rgba(0, 82, 217, 0.15);
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0052d9;
+  margin: 12px 0;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 拓扑图容器 */
+.topology-container {
+  background: #fff;
+  border: 2px solid #000;
+  height: 600px;
+  position: relative;
+}
+
+/* 图表容器 */
+.chart-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  height: 400px;
+}
+
+/* 路径展示 */
+.path-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  font-family: 'Courier New', monospace;
+}
+
+.path-node {
+  padding: 8px 16px;
+  background: #0052d9;
+  color: #fff;
+  font-weight: 600;
+  border: 2px solid #003d99;
+}
+
+.path-arrow {
+  color: #666;
+  font-weight: bold;
+}
+
+/* 协议层卡片 */
+.protocol-layer {
+  background: #fff;
+  border-left: 4px solid #0052d9;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.layer-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #000;
+}
+
+.layer-content {
+  font-size: 13px;
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+
+/* 工具栏 */
+.toolbar {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 头部导航（仅用于非Layout场景） */
+.page-header {
+  background: #000;
+  color: #fff;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 4px solid #0052d9;
+}
+
+.header-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 表格样式覆盖 */
+.t-table {
+  border: 1px solid #ddd !important;
+}
+
+.t-table th {
+  background: #f5f5f5 !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid #000 !important;
+}
+
+/* 标签页样式 */
+.t-tabs__nav {
+  border-bottom: 2px solid #000 !important;
+}
+
+.t-tabs__nav-item {
+  border: none !important;
+}
+
+.t-tabs__nav-item.t-is-active {
+  border-bottom: 3px solid #0052d9 !important;
+  font-weight: 600 !important;
+}
+
+/* 状态标签 */
+.status-tag {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.status-success {
+  background: #e8f8f2;
+  color: #00a870;
+  border-color: #00a870;
+}
+
+.status-error {
+  background: #fff1f0;
+  color: #e34d59;
+  border-color: #e34d59;
+}
+
+.status-warning {
+  background: #fff8e6;
+  color: #ed7b2f;
+  border-color: #ed7b2f;
+}
+
+.status-info {
+  background: #e8f2ff;
+  color: #0052d9;
+  border-color: #0052d9;
+}
+
+/* 响应式 */
+@media (max-width: 1200px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 动画效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 加载状态 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 64px;
+  color: #ddd;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: #999;
+}
